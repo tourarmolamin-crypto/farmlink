@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FarmLink Gambia</title>
+<style>
+:root{--bg:#FBF3E4;--card:#FFFFFF;--ink:#1D2B22;--mut:#5D6B62;--g:#1B6B35;--gt:#FFFFFF;--o:#F7941D;--ot:#1D2B22;--line:#E6DCC6;--warn:#FDE8E0;--chip:#F1E6CC;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121A15;--card:#1B2620;--ink:#EDF2EA;--mut:#A3B2A8;--g:#4FB56F;--gt:#0E1A12;--o:#F29A45;--ot:#1A1209;--line:#2C3A31;--warn:#3A2219;--chip:#24312A}}
+:root[data-theme="dark"]{--bg:#121A15;--card:#1B2620;--ink:#EDF2EA;--mut:#A3B2A8;--g:#4FB56F;--gt:#0E1A12;--o:#F29A45;--ot:#1A1209;--line:#2C3A31;--warn:#3A2219;--chip:#24312A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+main{max-width:560px;margin:0 auto;padding:12px 16px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+header h1{font:700 22px/1.1 Georgia,"Times New Roman",serif;margin:0;color:var(--g)}
+header small{display:block;color:var(--mut);font:13px system-ui}
+h2{font:700 20px Georgia,serif;margin:16px 0 8px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:4px 0 10px}
+label{font-size:14px;color:var(--mut)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
+.chip{flex:none;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--chip);cursor:pointer}
+.chip.on{background:var(--g);color:var(--gt);border-color:var(--g)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.name{font-weight:700}.mut{color:var(--mut);font-size:14px}
+.price{color:var(--g);font-weight:700}
+.tag{font-size:13px;padding:2px 8px;border-radius:8px;background:var(--chip)}
+.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer;background:var(--g);color:var(--gt)}
+.btn.o{background:var(--o);color:var(--ot)}.btn.l{background:var(--chip);color:var(--ink)}
+.btn.sm{padding:7px 10px;font-size:14px}
+.acts{display:flex;gap:8px;margin-top:10px}.acts .btn{flex:1}
+.stat{border-radius:14px;padding:16px;color:var(--gt);background:var(--g);margin-bottom:10px}
+.stat.o{background:var(--o);color:var(--ot)}
+.stat b{display:block;font:700 32px Georgia,serif}
+.alert{background:var(--warn)}
+.step{display:flex;gap:8px;align-items:center}.step button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:18px}
+.pay{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card)}
+.pay input{width:auto;margin:0}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:10px 2px;font-size:13px;color:var(--mut);cursor:pointer}
+nav button.on{color:var(--g);font-weight:700}
+nav svg{display:block;margin:0 auto 2px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:5}
+.note{font-size:13px;color:var(--mut);margin-top:16px}
+</style></head><body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<script>
+const E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CATS=['Vegetables','Fruits','Rice & grains','Groundnuts','Eggs & poultry','Honey','Farm inputs'];
+const SEED=()=>({products:[
+{id:1,n:'Fresh tomatoes',c:'Vegetables',p:50,u:'kg',l:'Sukuta',f:'Sample farmer',tag:'Fresh'},
+{id:2,n:'Onions',c:'Vegetables',p:40,u:'kg',l:'Tallinding',f:'Sample farmer',tag:'In stock'},
+{id:3,n:'Local rice',c:'Rice & grains',p:35,u:'kg',l:'Brikama',f:'Sample farmer',tag:'In stock'},
+{id:4,n:'Groundnuts',c:'Groundnuts',p:45,u:'kg',l:'Kerewan',f:'Sample farmer',tag:'In stock'},
+{id:5,n:'Eggs',c:'Eggs & poultry',p:150,u:'crate',l:'Banjul',f:'Sample farmer',tag:'In stock'},
+{id:6,n:'Pure honey',c:'Honey',p:200,u:'bottle',l:'Basse',f:'Sample farmer',tag:'In stock'},
+{id:7,n:'Mangoes',c:'Fruits',p:30,u:'kg',l:'Brikama',f:'Sample farmer',tag:'Fresh'},
+{id:8,n:'Fertilizer',c:'Farm inputs',p:1500,u:'bag',l:'Serekunda',f:'Sample supplier',tag:'In stock'}].concat([['Sweet peppers','Vegetables',60,'kg','Kombo'],['Cabbage','Vegetables',25,'kg','Brikama'],['Lettuce','Vegetables',20,'bunch','Sukuta'],['Cassava','Vegetables',20,'kg','Kerewan'],['Sweet potatoes','Vegetables',30,'kg','Tallinding'],['Bananas','Fruits',35,'kg','Kombo'],['Oranges','Fruits',25,'kg','Basse'],['Watermelon','Fruits',120,'piece','Kerewan'],['Millet','Rice & grains',40,'kg','Basse'],['Maize','Rice & grains',30,'kg','Brikama'],['Groundnut oil','Groundnuts',150,'bottle','Kerewan'],['Live chicken','Eggs & poultry',350,'piece','Banjul'],['Vegetable seeds','Farm inputs',100,'pack','Serekunda'],['Animal feed','Farm inputs',1200,'bag','Serekunda'],['Sprayer','Farm inputs',2500,'piece','Serekunda'],['Hoe and tools','Farm inputs',400,'piece','Brikama'],['Irrigation pipe','Farm inputs',900,'roll','Serekunda']].map((a,i)=>({id:20+i,n:a[0],c:a[1],p:a[2],u:a[3],l:a[4],f:'Sample farmer',tag:'In stock'}))),
+cart:{},orders:[],alerts:[],rate:10,v:2,pw:''});
+let S;try{S=JSON.parse(localStorage.getItem('farmlink')||'null')}catch(e){S=null}
+if(!S||!S.products)S=SEED();else if(S.v!==2){S.products=SEED().products;S.v=2;S.pw=S.pw||''}
+let tab='shop',cat='All',q='',pay='Wave',toastT;
+const save=()=>{try{localStorage.setItem('farmlink',JSON.stringify(S))}catch(e){}};
+const D=n=>'D'+Number(n).toLocaleString('en-US');
+const pid=id=>S.products.find(p=>p.id==id);
+function toast(m){clearTimeout(toastT);document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);toastT=setTimeout(()=>t.remove(),2200)}
+const ICON={shop:'M3 9l1-5h16l1 5M5 9v11h14V9',basket:'M5 9h14l-2 11H7zM9 9l3-5 3 5',orders:'M6 3h12v18H6zM9 8h6M9 12h6M9 16h4',sell:'M12 5v14M5 12h14',admin:'M4 20V10M10 20V4M16 20v-7M22 20H2'};
+const NAMES={shop:'Shop',basket:'Basket',orders:'Orders',sell:'Sell',admin:'Admin'};
+function nav(){const n=Object.values(S.cart).reduce((a,b)=>a+b,0);document.getElementById('nav').innerHTML=Object.keys(NAMES).map(k=>`<button data-tab="${k}" class="${tab==k?'on':''}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[k]}"/></svg>${NAMES[k]}${k=='basket'&&n?' ('+n+')':''}</button>`).join('')}
+const head=()=>`<header><svg width="36" height="36" viewBox="0 0 24 24" fill="var(--g)"><path d="M4 20C4 10 10 4 21 3c0 11-6 17-14 17-1 0-2 0-3 0zM4 20c3-5 6-8 11-10" stroke="var(--bg)" stroke-width="1.5" fill="none"/></svg><div><h1>FarmLink Gambia</h1><small>Gambia’s farm marketplace. Fresh, fast, fair.</small></div></header>`;
+function cards(){const L=S.products.filter(p=>(cat=='All'||p.c==cat)&&(!q||(p.n+p.l+p.c).toLowerCase().includes(q.toLowerCase())));
+return L.length?L.map(p=>`<div class="card"><div class="row"><div><div class="name">${E(p.n)}</div><div class="mut">${E(p.l)} · ${E(p.c)}</div></div><span class="tag">${E(p.tag)}</span></div><div class="price" style="margin-top:6px">${D(p.p)}/${E(p.u)}</div><div class="acts"><button class="btn l" data-add="${p.id}">Add to basket</button><button class="btn o" data-now="${p.id}">Order now</button></div></div>`).join(''):'<div class="card mut">No products match. Try another category or search word.</div>'}
+function vShop(){return head()+`<input id="q" type="search" placeholder="Search products or places" value="${E(q)}" aria-label="Search"><div class="chips">${['All',...CATS].map(c=>`<button class="chip ${cat==c?'on':''}" data-cat="${E(c)}">${E(c)}</button>`).join('')}</div><div id="list">${cards()}</div>`}
+const cartItems=()=>Object.entries(S.cart).map(([id,qty])=>({p:pid(id),qty})).filter(x=>x.p);
+const total=()=>cartItems().reduce((a,x)=>a+x.p.p*x.qty,0);
+function vBasket(){const it=cartItems();if(!it.length)return head()+'<h2>Basket</h2><div class="card mut">Your basket is empty. Add products from the Shop tab.</div>';
+return head()+'<h2>Basket</h2>'+it.map(x=>`<div class="card row"><div><div class="name">${E(x.p.n)}</div><div class="mut">${D(x.p.p)}/${E(x.p.u)}</div></div><div class="step"><button data-dec="${x.p.id}" aria-label="Less">−</button><b>${x.qty}</b><button data-inc="${x.p.id}" aria-label="More">+</button></div></div>`).join('')+
+`<div class="card row"><span class="name">Total</span><span class="price">${D(total())}</span></div>
+<label for="nm">Your name</label><input id="nm" autocomplete="name"><label for="ph">Phone number</label><input id="ph" inputmode="tel" autocomplete="tel"><label for="ad">Delivery address</label><input id="ad" autocomplete="street-address"><label for="dt">Delivery date</label><select id="dt"><option>Tomorrow</option><option>In 2 days</option><option>Weekly (every week)</option></select>
+<h2>Payment</h2>${['Wave','Cash on delivery'].map(m=>`<label class="pay"><input type="radio" name="pay" value="${m}" ${pay==m?'checked':''}> ${m}</label>`).join('')}<button class="btn o" style="width:100%" data-place="1">Place order</button>`}
+const ST=o=>o.delivered?(o.paid?'Completed':'Delivered, awaiting payment'):(o.paid?'Paid, awaiting delivery':'New order');
+function vOrders(){return head()+'<h2>My orders</h2>'+(S.orders.length?[...S.orders].reverse().map(o=>`<div class="card"><div class="row"><span class="name">Order #${o.id}</span><span class="tag">${ST(o)}</span></div><div class="mut">${o.items.map(i=>E(i.q+' × '+i.n)).join(', ')}</div><div class="row" style="margin-top:6px"><span class="price">${D(o.total)}</span><span class="mut">${E(o.pay)} · ${E(o.dt)}</span></div></div>`).join(''):'<div class="card mut">No orders yet. Place your first order from the Basket.</div>')}
+function vSell(){return head()+`<h2>Sell your produce</h2><div class="card"><label for="sn">Product name</label><input id="sn" placeholder="e.g. Cabbage"><label for="sc">Category</label><select id="sc">${CATS.map(c=>`<option>${E(c)}</option>`).join('')}</select><label for="sp">Price (D)</label><input id="sp" type="number" min="1" inputmode="numeric"><label for="su">Unit</label><select id="su"><option>kg</option><option>crate</option><option>bag</option><option>bottle</option><option>piece</option></select><label for="sl">Location</label><input id="sl" placeholder="e.g. Sukuta"><label for="sf">Your name</label><input id="sf"><button class="btn" style="width:100%" data-sell="1">Add to marketplace</button></div><div class="note">Farmers join free. FarmLink keeps ${S.rate}% commission and pays the farmer after delivery.</div>`}
+function stats(){const v=S.orders,sales=v.reduce((a,o)=>a+o.total,0),pend=v.filter(o=>!o.paid);return{sales,com:Math.round(sales*S.rate/100),pend:pend.reduce((a,o)=>a+o.total,0),pc:pend.length}}
+function vAdmin(){const s=stats();return head()+`<h2>Admin dashboard</h2><div class="stat">Total sales<b>${D(s.sales)}</b>${S.orders.length} orders</div><div class="stat o">My commission<b>${D(s.com)}</b>${S.rate}% of sales</div><div class="card"><div class="name">Pending payments</div><div class="price">${D(s.pend)} · ${s.pc} order${s.pc==1?'':'s'} awaiting</div></div>
+<h2>Orders</h2>${S.orders.length?[...S.orders].reverse().map(o=>`<div class="card"><div class="row"><span class="name">#${o.id} · ${E(o.name)}</span><span class="tag">${ST(o)}</span></div><div class="mut">${E(o.phone)} · ${E(o.addr)}</div><div class="mut">${o.items.map(i=>E(i.q+' × '+i.n)).join(', ')}</div><div class="row"><span class="price">${D(o.total)}</span><span class="mut">${E(o.pay)}</span></div><div class="acts">${o.delivered?'':`<button class="btn sm l" data-del="${o.id}">Mark delivered</button>`}${o.paid?'':`<button class="btn sm" data-paid="${o.id}">Mark paid</button>`}</div></div>`).join(''):'<div class="card mut">No orders yet. Orders appear here when buyers place them.</div>'}
+<h2>Spoilage alerts</h2>${S.alerts.map(a=>`<div class="card alert"><div class="name">${E(a.kg)} kg ${E(a.n)} spoiled in ${E(a.l)}</div><div class="acts"><button class="btn sm l" data-res="${a.id}">Resolved</button></div></div>`).join('')}
+<div class="card"><label for="an">Product</label><select id="an">${S.products.map(p=>`<option>${E(p.n)}</option>`).join('')}</select><label for="ak">Kilograms spoiled</label><input id="ak" type="number" min="1" inputmode="numeric"><label for="al">Place</label><input id="al"><button class="btn o" style="width:100%" data-alert="1">Report spoilage</button></div>
+<h2>Settings</h2><div class="card"><label for="rt">Commission rate (%)</label><input id="rt" type="number" min="0" max="50" value="${S.rate}"><button class="btn l" style="width:100%" data-reset="1">Reset sample data</button></div><div class="note">Test version: data and the admin password are saved on this device only.</div>`}
+let unlocked=false;
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('farmlink'+s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+function vLock(){return head()+`<h2>Admin</h2><div class="card"><div class="name">${S.pw?'Enter admin password':'Create an admin password'}</div><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" style="width:100%" ${S.pw?'data-unlock="1"':'data-setpw="1"'}>${S.pw?'Unlock':'Save password'}</button></div>`}
+function render(){document.getElementById('app').innerHTML=(tab=='admin'&&!unlocked?vLock:({shop:vShop,basket:vBasket,orders:vOrders,sell:vSell,admin:vAdmin})[tab])();nav();window.scrollTo(0,0)}
+const val=id=>(document.getElementById(id)||{}).value||'';
+function go(t){tab=t;if(t!='admin')unlocked=false;render()}
+document.addEventListener('input',e=>{if(e.target.id=='q'){q=e.target.value;document.getElementById('list').innerHTML=cards()}if(e.target.id=='rt'){S.rate=Math.max(0,Math.min(50,+e.target.value||0));save()}});
+document.addEventListener('change',e=>{if(e.target.name=='pay')pay=e.target.value});
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+if(d.tab)return go(d.tab);if(d.cat){cat=d.cat;return render()}
+if(d.add||d.now){const id=d.add||d.now;S.cart[id]=(S.cart[id]||0)+1;save();nav();if(d.now)return go('basket');return toast('Added to basket')}
+if(d.inc){S.cart[d.inc]++;save();return render()}
+if(d.dec){S.cart[d.dec]--;if(S.cart[d.dec]<1)delete S.cart[d.dec];save();return render()}
+if(d.place){const nm=val('nm').trim(),ph=val('ph').trim(),ad=val('ad').trim();if(!nm||!ph||!ad)return toast('Enter your name, phone and address');
+const it=cartItems(),id=1001+S.orders.length;S.orders.push({id,name:nm,phone:ph,addr:ad,dt:val('dt'),pay,items:it.map(x=>({n:x.p.n,q:x.qty})),total:total(),paid:false,delivered:false});S.cart={};save();toast('Order placed. Thank you!');return go('orders')}
+if(d.del||d.paid){const o=S.orders.find(o=>o.id==(d.del||d.paid));if(d.del)o.delivered=true;else o.paid=true;save();return render()}
+if(d.sell){const n=val('sn').trim(),p=+val('sp'),l=val('sl').trim();if(!n||!p||!l)return toast('Enter product name, price and location');
+S.products.unshift({id:Date.now(),n,c:val('sc'),p,u:val('su'),l,f:val('sf').trim()||'Farmer',tag:'New'});save();toast('Product added');cat='All';return go('shop')}
+if(d.alert){const k=+val('ak'),l=val('al').trim();if(!k||!l)return toast('Enter kilograms and place');S.alerts.unshift({id:Date.now(),n:val('an'),kg:k,l});save();return render()}
+if(d.res){S.alerts=S.alerts.filter(a=>a.id!=d.res);save();return render()}
+if(d.setpw){const p=val('pw');if(p.length<4)return toast('Use at least 4 characters');S.pw=await sha(p);save();unlocked=true;return render()}
+if(d.unlock){if(await sha(val('pw'))===S.pw){unlocked=true;return render()}return toast('Wrong password')}
+if(d.reset){const w=S.pw;S=SEED();S.pw=w;save();return render()}});
+render();
+</script></body></html>
